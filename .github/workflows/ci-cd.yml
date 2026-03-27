@@ -1,0 +1,39 @@
+name: CI-CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Dependencies
+      run: |
+        pip install -r app/requirements.txt
+
+    - name: Lint
+      run: |
+        pip install flake8
+        flake8 app/
+
+    - name: Test
+      run: |
+        echo "Run tests here"
+
+    - name: Build Docker Image
+      run: |
+        docker build -t sample-app .
+
+    - name: Deploy (Local Simulation)
+      run: |
+        docker run -d -p 5000:5000 sample-app
